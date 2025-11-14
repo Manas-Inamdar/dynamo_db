@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package dynamo;
+
+// --- Vector clock items ---
+message VectorClockItem {
+  string node_id = 1;
+  uint64 counter = 2;
+}
+
+message Context {
+  repeated VectorClockItem clock = 1;
+}
+
+// --- Value container with version context ---
+message ValueWithContext {
+  bytes value = 1;
+  Context context = 2;
+}
+
+// --- Node membership state (for gossip) ---
+message NodeState {
+  string node_id = 1;
+  string address = 2;         // host:port
+  uint32 generation = 3;      // incremented when node restarts
+  uint64 last_updated_time = 4; // unix epoch ms
+  bool up = 5;                // true => UP, false => DOWN
+}
+
+message MembershipList {
+  repeated NodeState members = 1;
+}
+
+// --- Hinted handoff message ---
+message Hint {
+  string key = 1;
+  ValueWithContext data = 2;
+  string target_node_id = 3;  // the intended node for this data
+  uint64 timestamp_ms = 4;
+}
+
+// --- PUT / GET request & reply messages ---
+message PutRequest {
+  string key = 1;
+  ValueWithContext data = 2;
+  // optional client metadata
+  string client_id = 3;
+  uint64 timestamp_ms = 4;
+}
+
+message PutReply {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetRequest {
+  string key = 1;
+  string client_id = 2;
+}
+
+message GetReply {
+  repeated ValueWithContext data = 1; // may contain multiple siblings
+  bool found = 2;
+  string message = 3;
+}
+
+// --- Hint delivery reply ---
+message DeliverHintsRequest {
+  string target_node_id = 1;
+  repeated Hint hints = 2;
+}
+message DeliverHintsReply {
+  bool success = 1;
+  string message = 2;
+}
+
+// --- Main service: client → coordinator and coordinator → replica RPCs ---
+service DynamoService {
+  // Client -> any node (that node becomes coordinator)
+  rpc Put (PutRequest) returns (PutReply);
+  rpc Get (GetRequest) returns (GetReply);
+
+  // Coordinator -> replica (internal forwarding)
+  rpc ForwardPut (PutRequest) returns (PutReply);
+  rpc ForwardGet (GetRequest) returns (GetReply);
+
+  // For hinted handoff storage on other nodes and delivery
+  rpc PutHint (Hint) returns (PutReply);
+  rpc DeliverHints (DeliverHintsRequest) returns (DeliverHintsReply);
+
+  // Gossip membership exchange
+  rpc Gossip (MembershipList) returns (MembershipList);
+}
