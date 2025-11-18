@@ -119,8 +119,20 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
 
     # ---------------------------
     # Forward PUT
-    # ---------------------------
+    # --------------------------
     def _send_forward_put(self, replica_id, key, vwc, ack_list):
+
+        # -----------------------------------------
+        # SKIP NETWORK CALL IF REPLICA IS KNOWN DOWN
+        # -----------------------------------------
+        with self.lock:
+            info = self.membership.get(replica_id)
+            if info and not info["up"]:
+                print(f"[{self.node_id}] SKIP PUT → {replica_id} (DOWN)")
+                self._store_hint(replica_id, key, vwc)
+                ack_list.append(0)
+                return
+
         address = self.ring.nodes.get(replica_id)
         if not address:
             print(f"[{self.node_id}] No address for replica {replica_id}, storing hint")
@@ -133,34 +145,56 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
             stub = dynamo_pb2_grpc.DynamoServiceStub(channel)
             req = dynamo_pb2.PutRequest(key=key, data=vwc)
             reply = stub.ForwardPut(req, timeout=1.5)
+
             if reply.success:
                 ack_list.append(1)
                 print(f"[{self.node_id}] Replica {replica_id} ACK")
                 return
+
             print(f"[{self.node_id}] Replica {replica_id} NACK → hint")
             self._store_hint(replica_id, key, vwc)
             ack_list.append(0)
+
         except Exception as e:
             print(f"[{self.node_id}] ERROR PUT→{replica_id}: {e}")
             self._store_hint(replica_id, key, vwc)
             ack_list.append(0)
 
+
+
     # ---------------------------
     # Forward GET
     # ---------------------------
     def _send_forward_get(self, replica_id, key, reply_list):
+
+        # -----------------------------------------
+        # SKIP NETWORK CALL IF REPLICA IS KNOWN DOWN
+        # -----------------------------------------
+        with self.lock:
+            info = self.membership.get(replica_id)
+            if info and not info["up"]:
+                # We don't append anything to reply_list because this replica 
+                # cannot contribute to read quorum.
+                print(f"[{self.node_id}] SKIP GET → {replica_id} (DOWN)")
+                return
+
         address = self.ring.nodes.get(replica_id)
         if not address:
             print(f"[{self.node_id}] No address for replica {replica_id}")
             return
+
         try:
             channel = grpc.insecure_channel(address)
             stub = dynamo_pb2_grpc.DynamoServiceStub(channel)
-            reply = stub.ForwardGet(dynamo_pb2.GetRequest(key=key), timeout=1.5)
+            reply = stub.ForwardGet(
+                dynamo_pb2.GetRequest(key=key), timeout=1.5
+            )
             reply_list.append((replica_id, reply))
             print(f"[{self.node_id}] GET reply from {replica_id}")
+
         except Exception as e:
             print(f"[{self.node_id}] ERROR GET→{replica_id}: {e}")
+
 
     # ---------------------------
     # Version reconciliation
@@ -259,10 +293,12 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
 
         if success >= W:
             return dynamo_pb2.PutReply(success=True,
-                                       message=f"W quorum satisfied ({success})")
+                                       message=f"W quorum satisfied ({success})"
+            )
         else:
             return dynamo_pb2.PutReply(success=False,
-                                       message=f"Write failed ({success})")
+                                       message=f"Write failed ({success})"
+            )
 
     # ====================================================
     # CLIENT-FACING GET
@@ -296,7 +332,8 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
 
         if len(replies) < R:
             return dynamo_pb2.GetReply(found=False,
-                                       message=f"R quorum FAIL ({len(replies)})")
+                                       message=f"R quorum FAIL ({len(replies)})"
+            )
 
         all_versions = []
         for _, rep in replies:
