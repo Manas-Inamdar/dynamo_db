@@ -6,11 +6,11 @@ class DHTRing:
 
     def __init__(self, vnode_count=10):
         self.vnode_count = vnode_count
-        self.ring = []  # list of (token_hash:int, node_id:str)
-        self.nodes = {}  # node_id -> address (optional)
-    
+        self.ring = []           # list of (token_hash:int, node_id:str)
+        self.nodes = {}          # node_id -> address
+
     # -------------------------------
-    # Hash helper
+    # Hash helper — MUST match vnode hashing
     # -------------------------------
     @staticmethod
     def hash_value(data: str) -> int:
@@ -21,76 +21,84 @@ class DHTRing:
     # Add a physical node + its virtual nodes
     # -------------------------------
     def add_node(self, node_id: str, address: str):
-        """
-        Add a new physical node to the ring.
-        Adds vnode_count virtual tokens for this node.
-        """
         if node_id in self.nodes:
             print(f"[Ring] Node {node_id} already exists.")
             return
         
         self.nodes[node_id] = address
-        
+
+        # Add vnodes
         for i in range(self.vnode_count):
             token_str = f"{node_id}-vnode-{i}"
             token_hash = self.hash_value(token_str)
             bisect.insort(self.ring, (token_hash, node_id))
-        
+
         print(f"[Ring] Added node {node_id} with {self.vnode_count} vnodes.")
 
     # -------------------------------
     # Remove a node (and all its vnodes)
     # -------------------------------
     def remove_node(self, node_id: str):
-        """Remove all tokens belonging to node_id."""
-        new_ring = [(tok, nid) for (tok, nid) in self.ring if nid != node_id]
-        removed = len(self.ring) - len(new_ring)
-        self.ring = new_ring
-        
+        before = len(self.ring)
+        self.ring = [(tok, nid) for (tok, nid) in self.ring if nid != node_id]
+        removed = before - len(self.ring)
+
         if node_id in self.nodes:
             del self.nodes[node_id]
 
         print(f"[Ring] Removed node {node_id}, removed {removed} tokens.")
 
-    # -------------------------------
-    # Find the preference list (N distinct physical nodes)
-    # -------------------------------
+    # ---------------------------------------------------
+    # CORRECT DYNAMO PREFERENCE LIST IMPLEMENTATION
+    # ---------------------------------------------------
     def get_preference_list(self, key: str, N: int):
-        """Returns the next N distinct nodes clockwise from key hash."""
+        """
+        Return up to N distinct physical nodes in clockwise order,
+        starting from the first vnode whose token >= hash(key).
+
+        This is the correct Dynamo behavior.
+        """
         if not self.ring:
             return []
 
         key_hash = self.hash_value(key)
-        # Find insertion point
-        idx = bisect.bisect(self.ring, (key_hash, ""))
+
+        # Find first token >= key_hash (or wrap to 0)
+        idx = bisect.bisect_left(self.ring, (key_hash, ""))
 
         result = []
-        visited = set()
-        ring_len = len(self.ring)
+        seen_nodes = set()
 
-        # Walk clockwise around ring
+        ring_len = len(self.ring)
         i = idx
-        while len(result) < N and len(visited) < len(self.nodes):
-            token_hash, node_id = self.ring[i % ring_len]
-            if node_id not in visited:
-                visited.add(node_id)
+
+        # Walk entire ring at most once
+        for _ in range(ring_len):
+            token, node_id = self.ring[i % ring_len]
+
+            if node_id not in seen_nodes:
+                seen_nodes.add(node_id)
                 result.append(node_id)
+
+                if len(result) == N:
+                    break
+
             i += 1
 
         return result
-    
+
     # -------------------------------
     # Debug helper
     # -------------------------------
     def print_ring(self):
         print("---- RING STATE ----")
-        for token, nid in self.ring[:30]:
+        for token, nid in self.ring[:40]:
             print(f"{token} -> {nid}")
         print("---------------------")
 
 
 # --------------------------------------------------------
-# Basic test cases (run this file directly to test)
+# Basic test cases (run this file directly)
 # --------------------------------------------------------
 if __name__ == "__main__":
     print("Running basic DHTRing tests...")

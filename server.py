@@ -11,6 +11,7 @@ import dynamo_pb2_grpc
 from dht_ring import DHTRing
 from vector_clock import VectorClock
 from storage import Storage
+import argparse
 
 
 # ----------------------------------------------------
@@ -29,11 +30,20 @@ REMOVE_TIMEOUT_MS = 120000   # remove from ring after 2 minutes DOWN
 #   DYNAMO NODE SERVICE IMPLEMENTATION (Coordinator)
 # ====================================================
 class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
-
     def __init__(self, node_id, address, ring):
         self.node_id = node_id
         self.address = address
         self.ring = ring
+
+        # Ensure our node is present in the ring (so preference lists can include self)
+        try:
+            if self.node_id not in self.ring.nodes:
+                # add self's vnodes to the ring so coordinator may include itself
+                self.ring.add_node(self.node_id, self.address)
+                print(f"[{self.node_id}] Added self to ring at {self.address}")
+        except Exception as e:
+            # defensive: don't crash server startup if ring manipulation fails
+            print(f"[{self.node_id}] Warning: failed to add self to ring: {e}")
 
         # storage + hints
         self.store = {}
@@ -44,7 +54,6 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
         self.lock = threading.Lock()
 
         # Initialize membership for all known nodes in ring
-                # Initialize membership for all known nodes in ring
         now_ms = int(time.time() * 1000)
         for nid, addr in self.ring.nodes.items():
             is_self = (nid == self.node_id)
@@ -54,8 +63,7 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
                 "up": is_self,
                 "address": addr
             }
-
-        # Ensure there's always a local entry for this node even if ring didn't include it
+         # Ensure there's always a local entry for this node even if ring didn't include it
         if self.node_id not in self.membership:
             # Node may be starting as a newcomer (not yet joined). Create local membership entry.
             self.membership[self.node_id] = {
@@ -81,6 +89,10 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
         # Start gossip thread
         t = threading.Thread(target=self._gossip_loop, daemon=True)
         t.start()
+
+
+
+       
 
     # ---------------------------
     # Hint storage
@@ -371,6 +383,7 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
     # GOSSIP RPC
     # ====================================================
     def Gossip(self, request, context):
+        # Parse incoming membership
         incoming = {}
         for m in request.members:
             incoming[m.node_id] = {
@@ -380,168 +393,181 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
                 "address": m.address
             }
 
-        changed = False
         to_deliver = []
+        now_ms = int(time.time() * 1000)
 
-        # ---------------------------
-        # Merge membership
-        # ---------------------------
-                # ---------------------------
-        # Merge membership
-        # ---------------------------
         with self.lock:
+            # ============================================
+            # 1. MERGE MEMBERSHIP INFORMATION
+            # ============================================
             for nid, info in incoming.items():
                 cur = self.membership.get(nid)
 
-                # New node entirely
+                # ------------- NEW NODE DISCOVERED -------------
                 if cur is None:
                     self.membership[nid] = info.copy()
                     print(f"[{self.node_id}] Gossip: NEW node {nid} @ {info['address']}")
-                    changed = True
 
-                    # ADD TO RING (skip adding self here)
-                    if info.get("address") and nid != self.node_id and nid not in self.ring.nodes:
+                    # Add to ring (skip adding self)
+                    if nid != self.node_id and info["address"] and nid not in self.ring.nodes:
                         try:
                             self.ring.add_node(nid, info["address"])
-                            print(f"[{self.node_id}] Added {nid} to ring via gossip")
+                            print(f"[{self.node_id}] Ring add (new): {nid}")
                         except Exception as e:
                             print(f"[{self.node_id}] ring.add_node ERROR: {e}")
 
                     continue
 
-                # Existing node → check update
-                if (info.get("generation", 0) > cur.get("generation", 0)) or \
-                   (info.get("last_ts", 0) > cur.get("last_ts", 0)):
-                    prev_up = cur.get("up", False)
+                # ------------- EXISTING NODE: CHECK UPDATE -------------
+                newer = (info["generation"] > cur["generation"]) or \
+                        (info["last_ts"] > cur["last_ts"])
 
-                    cur["generation"] = info.get("generation", cur.get("generation", 0))
-                    cur["last_ts"] = info.get("last_ts", cur.get("last_ts", 0))
-                    cur["up"] = info.get("up", cur.get("up", False))
-                    cur["address"] = info.get("address", cur.get("address"))
+                if newer:
+                    prev_up = cur["up"]
 
-                    changed = True
+                    cur["generation"] = info["generation"]
+                    cur["last_ts"] = info["last_ts"]
+                    cur["up"] = info["up"]
+                    cur["address"] = info["address"]
 
-                    # Add to ring IF now known and not present (skip self)
-                    if cur.get("address") and nid != self.node_id and nid not in self.ring.nodes:
+                    # add to ring if newly discovered address
+                    if nid != self.node_id and info["address"] and nid not in self.ring.nodes:
                         try:
-                            self.ring.add_node(nid, cur["address"])
-                            print(f"[{self.node_id}] Learned {nid} via gossip; added to ring")
-                        except Exception as e:
-                            print(f"[{self.node_id}] ring.add_node ERROR: {e}")
+                            self.ring.add_node(nid, info["address"])
+                            print(f"[{self.node_id}] Ring add (learned): {nid}")
+                        except:
+                            pass
 
-                    # If transitioned down→up deliver hints
-                    if (not prev_up) and cur.get("up"):
+                    # Node RECOVERED → schedule hint delivery
+                    # Node RECOVERED → schedule hint delivery + print once
+                    if not prev_up and cur["up"]:
+                        print(f"[{self.node_id}] {nid} RECOVERED")
                         if nid in self.hints and self.hints[nid]:
                             to_deliver.append(nid)
 
-            # ---------------------------
-            # Mark DOWN by timeout
-            # ---------------------------
-            now = int(time.time() * 1000)
-            for nid, cur in list(self.membership.items()):
+                    # if not prev_up and cur["up"]:
+                    #     if nid in self.hints and self.hints[nid]:
+                    #         to_deliver.append(nid)
+
+            # ============================================
+            # 2. MARK NODES DOWN BY TIMEOUT
+            # ============================================
+            for nid, cur in self.membership.items():
                 if nid == self.node_id:
                     continue
 
-                # if silent → DOWN
-                if cur.get("up", True) and now - cur.get("last_ts", 0) > FAIL_TIMEOUT_MS:
+                if cur["up"] and now_ms - cur["last_ts"] > FAIL_TIMEOUT_MS:
                     cur["up"] = False
                     print(f"[{self.node_id}] TIMEOUT → DOWN: {nid}")
-                    changed = True
 
-            # ---------------------------
-            # Dynamic ring update
-            # ---------------------------
+            # ============================================
+            # 3. RING UPDATES (BUG FIX: use correct vars)
+            # ============================================
             for nid, info in list(self.membership.items()):
-                # Add nodes that are UP and not present in ring (skip self)
-                if info.get("up") and nid != self.node_id and nid not in self.ring.nodes and info.get("address"):
-                    print(f"[{self.node_id}] Ring update: adding node {nid} ({info['address']})")
+
+                # ---- ADD NODES THAT ARE UP AND MISSING ----
+                if info["up"] and nid != self.node_id and info["address"] \
+                and nid not in self.ring.nodes:
                     try:
                         self.ring.add_node(nid, info["address"])
-                    except Exception as e:
-                        print(f"[{self.node_id}] ring.add_node ERROR (during dynamic add): {e}")
+                        print(f"[{self.node_id}] Ring add (UP): {nid}")
+                    except:
+                        pass
 
-                # remove from RING if long-down
-                if (not info.get("up")) and (now - info.get("last_ts", 0) > REMOVE_TIMEOUT_MS):
+                # ---- REMOVE NODES DOWN FOR LONG ----
+                if (not info["up"]) and \
+                (now_ms - info["last_ts"] > REMOVE_TIMEOUT_MS):
                     if nid in self.ring.nodes:
                         try:
                             self.ring.remove_node(nid)
-                            print(f"[{self.node_id}] REMOVED from ring: {nid}")
+                            print(f"[{self.node_id}] Ring remove (DOWN too long): {nid}")
                         except Exception as e:
                             print(f"[{self.node_id}] ring.remove_node ERROR: {e}")
 
-        
-        # ---------------------------
-        # Deliver hints outside lock
-        # ---------------------------
+        # ============================================
+        # 4. DELIVER HINTS (outside lock)
+        # ============================================
         for nid in to_deliver:
             self.deliver_hints_to(nid)
 
-        # ---------------------------
-        # Respond with our membership
-        # ---------------------------
+        # ============================================
+        # 5. RETURN LOCAL MEMBERSHIP STATE
+        # ============================================
         resp = dynamo_pb2.MembershipList()
         with self.lock:
             for nid, cur in self.membership.items():
-                ns = dynamo_pb2.NodeState(
-                    node_id=nid,
-                    address=cur["address"],
-                    generation=cur["generation"],
-                    last_updated_time=cur["last_ts"],
-                    up=cur["up"]
+                resp.members.append(
+                    dynamo_pb2.NodeState(
+                        node_id=nid,
+                        address=cur["address"],
+                        generation=cur["generation"],
+                        last_updated_time=cur["last_ts"],
+                        up=cur["up"]
+                    )
                 )
-                resp.members.append(ns)
         return resp
-
     # ====================================================
     # GOSSIP LOOP
     # ====================================================
     def _gossip_loop(self):
-        time.sleep(0.5)  # small delay
+        time.sleep(0.5)
         while True:
             try:
                 now = int(time.time() * 1000)
                 with self.lock:
                     self.membership[self.node_id]["last_ts"] = now
 
-                # Choose peers with known address
-                with self.lock:
-                    peers = [nid for nid, info in self.membership.items()
-                             if nid != self.node_id and info["address"]]
+                    # choose ONLY UP peers
+                    peers = [
+                        nid for nid, info in self.membership.items()
+                        if nid != self.node_id
+                        and info["address"]
+                        and info["up"]          # <-- skip known DOWN nodes
+                    ]
 
                 if not peers:
                     time.sleep(GOSSIP_INTERVAL)
                     continue
 
                 peer = random.choice(peers)
-                peer_addr = self.membership[peer]["address"]
+
+                with self.lock:
+                    peer_addr = self.membership[peer]["address"]
 
                 # Build outgoing membership list
                 out = dynamo_pb2.MembershipList()
                 with self.lock:
                     for nid, cur in self.membership.items():
-                        ns = dynamo_pb2.NodeState(
-                            node_id=nid,
-                            address=cur["address"],
-                            generation=cur["generation"],
-                            last_updated_time=cur["last_ts"],
-                            up=cur["up"],
+                        out.members.append(
+                            dynamo_pb2.NodeState(
+                                node_id=nid,
+                                address=cur["address"],
+                                generation=cur["generation"],
+                                last_updated_time=cur["last_ts"],
+                                up=cur["up"],
+                            )
                         )
-                        out.members.append(ns)
 
-                # Send gossip
                 try:
                     ch = grpc.insecure_channel(peer_addr)
                     stub = dynamo_pb2_grpc.DynamoServiceStub(ch)
                     resp = stub.Gossip(out, timeout=2)
                     self.Gossip(resp, None)
-                except Exception as e:
-                    print(f"[{self.node_id}] Gossip→{peer} failed: {e}")
+
+                except Exception:
+                    # Do NOT print RPC spam
+                    # Instead: mark DOWN once
+                    with self.lock:
+                        info = self.membership.get(peer)
+                        if info and info["up"]:
+                            info["up"] = False
+                            # Mark DOWN only once
+                            print(f"[{self.node_id}] Marked {peer} DOWN (RPC failure).")
 
             except Exception as e:
                 print(f"[{self.node_id}] Gossip loop error: {e}")
 
             time.sleep(GOSSIP_INTERVAL)
-
 
 # ====================================================
 #   SERVER STARTUP
@@ -560,18 +586,57 @@ def serve(node_id, port, ring):
 # ====================================================
 #   MAIN
 # ====================================================
+# ====================================================
+#   MAIN
+# ====================================================
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 3:
-        print("Usage: python server.py <node_id> <port>")
-        exit(1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("node_id")
+    parser.add_argument("port")
+    parser.add_argument("--seed", required=False,
+                        help="Seed node address (host:port) for joining the cluster")
+    args = parser.parse_args()
 
-    node_id = sys.argv[1]
-    port = int(sys.argv[2])
+    node_id = args.node_id
+    port = int(args.port)
 
     ring = DHTRing(vnode_count=10)
-    ring.add_node("node-1", "localhost:50051")
-    ring.add_node("node-2", "localhost:50052")
-    ring.add_node("node-3", "localhost:50053")
 
-    serve(node_id, port, ring)
+    # Start server
+    threading.Thread(
+        target=lambda: serve(node_id, port, ring),
+        daemon=True
+    ).start()
+
+    # Give the server time to come online
+    time.sleep(1.0)
+
+    # ------------------------
+    # AUTO-JOIN if --seed used
+    # ------------------------
+    if args.seed:
+        try:
+            print(f"[{node_id}] Contacting seed {args.seed} ...")
+
+            ch = grpc.insecure_channel(args.seed)
+            stub = dynamo_pb2_grpc.DynamoServiceStub(ch)
+
+            ml = dynamo_pb2.MembershipList()
+            ns = dynamo_pb2.NodeState(
+                node_id=node_id,
+                address=f"localhost:{port}",
+                generation=1,
+                last_updated_time=int(time.time() * 1000),
+                up=True
+            )
+            ml.members.append(ns)
+
+            stub.Gossip(ml, timeout=3)
+            print(f"[{node_id}] Successfully joined cluster via seed {args.seed}")
+
+        except Exception as e:
+            print(f"[{node_id}] Failed to auto-join via seed: {e}")
+
+    # keep main thread alive
+    while True:
+        time.sleep(10)
