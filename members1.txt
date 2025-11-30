@@ -1,0 +1,6 @@
+[CLIENT] Added seed: localhost:50051
+[CLIENT] VIEW MEMBERSHIP → localhost:50051
+
+--- Cluster Membership ---
+node-1      localhost:50051       gen=1      UP
+node-2      localhost:50052       gen=1      UP

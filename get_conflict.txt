@@ -1,0 +1,13 @@
+[CLIENT] Added seed: localhost:50051
+[CLIENT] GET → localhost:50051 : conflict-key
+
+Found 2 version(s):
+
+--- Version 0 ---
+Value: value-from-node1
+Vector Clock: {'node-1': 1}
+
+--- Version 1 ---
+Value: value-from-node2
+Vector Clock: {'node-2': 1}
+

@@ -1,0 +1,196 @@
+[Ring] Added node node-1 with 10 vnodes.
+[node-1] Added self to ring at localhost:50051
+[node-1] Node initialized at localhost:50051
+[node-1] Loaded 90814 versions from disk
+[node-1] Server started on port 50051
+[node-1] Gossip: NEW node node-2 @ localhost:50052
+[Ring] Added node node-2 with 10 vnodes.
+[node-1] Ring add (new): node-2
+[node-1] Gossip: NEW node node-3 @ localhost:50053
+[Ring] Added node node-3 with 10 vnodes.
+[node-1] Ring add (new): node-3
+[node-1] Marked node-3 DOWN (RPC failure).
+[node-1] CLIENT GET bench-key-39
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT PUT bench-key-234
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] GET reply from node-2
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT GET bench-key-484
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] GET reply from node-2
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT PUT bench-key-166
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] GET reply from node-2
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT GET bench-key-856
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] GET reply from node-2
+[node-1] GET reply from node-1
+[node-1] GET reply from node-2
+[node-1] CLIENT PUT bench-key-741
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT GET bench-key-337
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT PUT bench-key-523
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] GET reply from node-1
+[node-1] GET reply from node-2
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT GET bench-key-559
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] GET reply from node-2
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] GET reply from node-2
+[node-1] CLIENT PUT bench-key-589
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] CLIENT GET bench-key-238
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] GET reply from node-1
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT PUT bench-key-451
+[node-1] Preference list: ['node-1', 'node-3', 'node-2']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] GET reply from node-1
+[node-1] CLIENT GET bench-key-947
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] GET reply from node-2
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT PUT bench-key-551
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] CLIENT GET bench-key-166
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] GET reply from node-1
+[node-1] GET reply from node-2
+[node-1] CLIENT PUT bench-key-220
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] CLIENT GET bench-key-834
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] GET reply from node-1
+[node-1] GET reply from node-2
+[node-1] CLIENT PUT bench-key-431
+[node-1] Preference list: ['node-3', 'node-1', 'node-2']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-1
+[node-1] CLIENT PUT bench-key-552
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] CLIENT PUT bench-key-413
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] GET reply from node-1
+[node-1] SKIP GET → node-3 (DOWN)
+[node-1] GET reply from node-2
+[node-1] GET reply from node-1
+[node-1] GET reply from node-2
+[node-1] Persisted version of key=bench-key-234
+[node-1] SKIP PUT → node-3 (DOWN)
+[node-1] ReadRepair: updated node-2
+[node-1] CLIENT GET bench-key-534
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] Replica node-2 ACK
+[node-1] CLIENT PUT bench-key-384
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] Persisted version of key=bench-key-166
+[node-1] CLIENT PUT bench-key-160
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] ReadRepair: updated node-2
+[node-1] ReadRepair: updated node-2
+[node-1] CLIENT PUT bench-key-665
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET bench-key-723
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] ReadRepair: updated node-2
+[node-1] CLIENT GET bench-key-154
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET bench-key-33
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] ReadRepair: updated node-2
+[node-1] CLIENT GET bench-key-162
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT PUT bench-key-446
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT bench-key-462
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT PUT bench-key-857
+[node-1] Preference list: ['node-1', 'node-3', 'node-2']
+[node-1] CLIENT PUT bench-key-548
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT bench-key-187
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT PUT bench-key-811
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT bench-key-25
+[node-1] Preference list: ['node-3', 'node-1', 'node-2']
+[node-1] CLIENT GET bench-key-230
+[node-1] Preference list: ['node-1', 'node-3', 'node-2']
+[node-1] CLIENT PUT bench-key-988
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET bench-key-117
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT PUT bench-key-973
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT bench-key-73
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET bench-key-888
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT bench-key-227
+[node-1] Preference list: ['node-1', 'node-3', 'node-2']
+[node-1] CLIENT PUT bench-key-881
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET bench-key-716
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET bench-key-994
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET bench-key-412
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET bench-key-85
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET bench-key-834
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET bench-key-583
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET bench-key-602
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET bench-key-306
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT PUT bench-key-832
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET bench-key-474
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT PUT bench-key-726
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT bench-key-88
+[node-1] Preference list: ['node-1', 'node-3', 'node-2']
+[node-1] CLIENT PUT bench-key-925
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT PUT bench-key-816
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET bench-key-762
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET bench-key-122
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT PUT bench-key-49
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT PUT bench-key-221
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT bench-key-71
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET bench-key-647
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']

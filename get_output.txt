@@ -1,0 +1,9 @@
+[CLIENT] Added seed: localhost:50051
+[CLIENT] GET → localhost:50051 : hello
+
+Found 1 version(s):
+
+--- Version 0 ---
+Value: world
+Vector Clock: {'node-1': 1}
+

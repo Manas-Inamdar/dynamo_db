@@ -1,0 +1,4 @@
+[CLIENT] Added seed: localhost:50051
+[CLIENT] PUT → localhost:50051 : b = banana
+Success: True
+Message: W quorum satisfied (1)

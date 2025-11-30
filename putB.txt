@@ -1,0 +1,4 @@
+[CLIENT] Added seed: localhost:50052
+[CLIENT] PUT → localhost:50052 : conflict-key = value-from-node2
+Success: True
+Message: W quorum satisfied (3)

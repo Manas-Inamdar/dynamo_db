@@ -253,22 +253,79 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
         print(f"[{self.node_id}] STORED REMOTE HINT for {request.key}")
         return dynamo_pb2.PutReply(success=True, message="Hint stored")
 
-    # ====================================================
-    # CLIENT-FACING PUT
+        # ====================================================
+    # CLIENT-FACING PUT (fixed: merge existing contexts before increment)
     # ====================================================
     def Put(self, request, context):
         print(f"[{self.node_id}] CLIENT PUT {request.key}")
 
         key = request.key
-        incoming = VectorClock.from_proto(request.data.context)
-        incoming.increment(self.node_id)
-
-        vwc = dynamo_pb2.ValueWithContext(value=request.data.value,
-                                          context=incoming.to_proto())
-
+        # Determine preference list
         pref = self.ring.get_preference_list(key, N)
         print(f"[{self.node_id}] Preference list: {pref}")
 
+        # -----------------------------
+        # 1) Collect existing versions from replicas (including local)
+        # -----------------------------
+        existing_vwcs = []
+
+        # helper to collect local store quickly
+        with self.lock:
+            local_vals = list(self.store.get(key, []))
+        existing_vwcs.extend(local_vals)
+
+        # collect from other replicas in parallel
+        reply_list = []
+        threads = []
+        for rid in pref:
+            if rid == self.node_id:
+                continue
+            t = threading.Thread(target=self._send_forward_get, args=(rid, key, reply_list))
+            t.start()
+            threads.append(t)
+
+        # wait a short time for replies (same pattern as Get)
+        waited = 0.0
+        timeout = 1.5
+        poll_interval = 0.05
+        while waited < timeout and len(reply_list) < max(0, R - (1 if self.node_id in pref else 0)):
+            time.sleep(poll_interval)
+            waited += poll_interval
+
+        for t in threads:
+            t.join(timeout=0.01)
+
+        # flatten replies
+        for rid, rep in reply_list:
+            for v in rep.data:
+                existing_vwcs.append(v)
+
+        # -----------------------------
+        # 2) Merge vector clocks from existing versions (if any)
+        # -----------------------------
+        merged_vc = VectorClock()
+        if existing_vwcs:
+            # Convert each context proto -> VectorClock and merge
+            for v in existing_vwcs:
+                try:
+                    vc = VectorClock.from_proto(v.context)
+                    merged_vc = merged_vc.merge(vc)
+                except Exception:
+                    # defensive fallback: attempt from_proto and ignore failures
+                    pass
+
+        # -----------------------------
+        # 3) Increment our own entry and build new ValueWithContext
+        # -----------------------------
+        merged_vc.increment(self.node_id)
+        vwc = dynamo_pb2.ValueWithContext(
+            value=request.data.value,
+            context=merged_vc.to_proto()
+        )
+
+        # -----------------------------
+        # 4) Proceed with normal forwarding & quorum logic
+        # -----------------------------
         success = 0
 
         if self.node_id in pref:
@@ -299,6 +356,7 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
             return dynamo_pb2.PutReply(success=False,
                                        message=f"Write failed ({success})"
             )
+
 
     # ====================================================
     # CLIENT-FACING GET
@@ -456,8 +514,14 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
                     continue
 
                 # ------------- EXISTING NODE: CHECK UPDATE -------------
-                newer = (info["generation"] > cur["generation"]) or \
-                        (info["last_ts"] > cur["last_ts"])
+                # Correct Dynamo membership precedence:
+                if info["generation"] > cur["generation"]:
+                    newer = True
+                elif info["generation"] == cur["generation"] and info["last_ts"] > cur["last_ts"]:
+                    newer = True
+                else:
+                    newer = False
+
 
                 if newer:
                     prev_up = cur["up"]
