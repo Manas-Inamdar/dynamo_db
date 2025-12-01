@@ -1,4 +1,4 @@
 Leave request sent. Updated membership:
 node-1: up=True, gen=1
-node-2: up=False, gen=1764529244
+node-2: up=False, gen=1764545225
 node-3: up=True, gen=1

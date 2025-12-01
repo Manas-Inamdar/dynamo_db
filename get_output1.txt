@@ -1,4 +1,9 @@
 [CLIENT] Added seed: localhost:50051
+[CLIENT] RPC Get -> localhost:50051 failed: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	details = "Deadline Exceeded"
+	debug_error_string = "UNKNOWN:Error received from peer  {grpc_message:"Deadline Exceeded", grpc_status:4}"
+>
 [CLIENT] GET → localhost:50051 : xkey
 
 Found 1 version(s):

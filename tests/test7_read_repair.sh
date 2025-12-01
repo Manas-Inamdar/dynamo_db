@@ -63,6 +63,8 @@ sleep 5   # allow gossip + hinted handoff + startup
 # 6) GET to trigger READ REPAIR
 ########################################
 echo "[TEST] GET before read repair:"
+echo "[TEST] Waiting 3s to allow gossip to stabilize..."
+sleep 3
 python3 client.py --seed localhost:50051 get "$KEY" > get_before_rr.txt 2>&1
 cat get_before_rr.txt
 

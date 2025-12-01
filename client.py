@@ -9,39 +9,48 @@ import dynamo_pb2_grpc
 NODES = {}
 
 # -----------------------------
-# RPC with failover
+# RPC with failover (improved)
 # -----------------------------
-def _call_rpc_with_failover(method_name, request, timeout=2.0):
+def _call_rpc_with_failover(method_name, request, timeout=5.0, max_retries=2):
     """
     Try calling an RPC on each known node.
     Returns (nid, addr, reply) or (None, None, None).
+
+    - timeout: per-RPC timeout in seconds (passed to the gRPC call)
+    - max_retries: how many times to attempt the entire node list before giving up
     """
     if not NODES:
         return None, None, None
 
-    items = list(NODES.items())
-    random.shuffle(items)
+    for attempt in range(max_retries):
+        items = list(NODES.items())
+        random.shuffle(items)
 
-    for nid, addr in items:
-        try:
-            channel = grpc.insecure_channel(addr)
-            stub = dynamo_pb2_grpc.DynamoServiceStub(channel)
-            rpc = getattr(stub, method_name)
+        for nid, addr in items:
+            try:
+                channel = grpc.insecure_channel(addr)
+                stub = dynamo_pb2_grpc.DynamoServiceStub(channel)
+                rpc = getattr(stub, method_name)
 
-            reply = rpc(request, timeout=timeout)
+                # call with explicit timeout so we don't hang forever
+                reply = rpc(request, timeout=timeout)
 
-            # Update node cache from gossip reply
-            if method_name == "Gossip" and reply is not None:
-                for m in reply.members:
-                    if m.address:
-                        NODES[m.node_id] = m.address
+                # If the RPC is a gossip reply, update cache
+                if method_name == "Gossip" and reply is not None:
+                    for m in reply.members:
+                        if m.address:
+                            NODES[m.node_id] = m.address
 
-            return nid, addr, reply
+                return nid, addr, reply
 
-        except Exception:
-            continue
+            except Exception as e:
+                # concise debug print (helps test scripts)
+                print(f"[CLIENT] RPC {method_name} -> {addr} failed: {e}")
+                continue
 
     return None, None, None
+
+
 
 # -----------------------------
 # Pretty print vector clock
@@ -50,7 +59,7 @@ def format_clock(clock_proto):
     return {entry.node_id: entry.counter for entry in clock_proto.clock}
 
 # -----------------------------
-# PUT
+# PUT (use shorter timeout and show clearer error)
 # -----------------------------
 def do_put(key, value):
     req = dynamo_pb2.PutRequest(
@@ -61,24 +70,25 @@ def do_put(key, value):
         )
     )
 
-    nid, addr, reply = _call_rpc_with_failover("Put", req, timeout=3)
+    nid, addr, reply = _call_rpc_with_failover("Put", req, timeout=5.0, max_retries=2)
     if reply is None:
-        print("[CLIENT] PUT failed: no reachable nodes")
+        print("[CLIENT] PUT failed: no reachable nodes (or all RPCs timed out)")
         return
 
     print(f"[CLIENT] PUT → {addr} : {key} = {value}")
     print("Success:", reply.success)
     print("Message:", reply.message)
 
+
 # -----------------------------
-# GET
+# GET (use shorter timeout)
 # -----------------------------
 def do_get(key):
     req = dynamo_pb2.GetRequest(key=key)
-    nid, addr, reply = _call_rpc_with_failover("Get", req, timeout=3)
+    nid, addr, reply = _call_rpc_with_failover("Get", req, timeout=5.0, max_retries=2)
 
     if reply is None:
-        print("[CLIENT] GET failed: no reachable nodes")
+        print("[CLIENT] GET failed: no reachable nodes (or all RPCs timed out)")
         return
 
     print(f"[CLIENT] GET → {addr} : {key}")
@@ -102,7 +112,7 @@ def do_get(key):
 # -----------------------------
 def view_membership():
     req = dynamo_pb2.MembershipList()
-    nid, addr, reply = _call_rpc_with_failover("Gossip", req, timeout=3)
+    nid, addr, reply = _call_rpc_with_failover("Gossip", req, timeout=5)
 
     if reply is None:
         print("[CLIENT] VIEW MEMBERSHIP failed: no reachable nodes")

@@ -39,13 +39,13 @@ def worker_thread(tid, seed_addr, ops, ratio_put, keyspace, out_list, start_barr
                 vwc.value = f"value-{tid}-{i}".encode('utf-8')
                 # leave context empty — coordinator will merge existing contexts
                 req = dynamo_pb2.PutRequest(key=key, data=vwc)
-                resp = stub.Put(req, timeout=5)
+                resp = stub.Put(req, timeout=1.0)
                 success = resp.success
                 msg = resp.message
                 op_type = "PUT"
             else:
                 req = dynamo_pb2.GetRequest(key=key)
-                resp = stub.Get(req, timeout=5)
+                resp = stub.Get(req,timeout=1.0)
                 success = resp.found
                 msg = resp.message
                 op_type = "GET"

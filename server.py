@@ -22,7 +22,7 @@ R = 2     # read quorum
 W = 2     # write quorum
 
 GOSSIP_INTERVAL = 1.0        # seconds between gossip rounds
-FAIL_TIMEOUT_MS = 5000       # node DOWN after this (5s of silence)
+FAIL_TIMEOUT_MS = 12000       # node DOWN after this (12s of silence)
 REMOVE_TIMEOUT_MS = 120000   # remove from ring after 2 minutes DOWN
 
 
@@ -31,7 +31,7 @@ REMOVE_TIMEOUT_MS = 120000   # remove from ring after 2 minutes DOWN
 # ====================================================
 class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
     def __init__(self, node_id, address, ring):
-        self.node_id = node_id
+        self.node_id = node_id  
         self.address = address
         self.ring = ring
 
@@ -63,6 +63,9 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
                 "up": is_self,
                 "address": addr
             }
+            # FIX: override stale timestamps so gossip does NOT think nodes are new
+        for nid in self.membership:
+            self.membership[nid]["last_ts"] = now_ms
          # Ensure there's always a local entry for this node even if ring didn't include it
         if self.node_id not in self.membership:
             # Node may be starting as a newcomer (not yet joined). Create local membership entry.
@@ -87,8 +90,13 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
         print(f"[{self.node_id}] Loaded {sum(len(v) for v in self.store.values())} versions from disk")
 
         # Start gossip thread
+                # Start gossip thread
         t = threading.Thread(target=self._gossip_loop, daemon=True)
         t.start()
+
+        # Start periodic hinted-handoff delivery thread
+        hdt = threading.Thread(target=self._hints_delivery_loop, daemon=True)
+        hdt.start()
 
 
 
@@ -448,31 +456,69 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
     # ====================================================
     # Hints delivery helper
     # ====================================================
+    
+    # ====================================================
+    # Hints delivery helper (robust)
+    # ====================================================
     def deliver_hints_to(self, target):
+        """
+        Attempt to deliver all pending hints for 'target'. This function:
+          - looks up address from membership, falls back to ring
+          - attempts RPC with a short timeout, retrying a couple times
+          - only deletes hints which remote acked
+          - logs all attempts/results
+        """
+        # copy local hints snapshot
         with self.lock:
-            hints = self.hints.get(target, [])
-            if not hints:
-                return
-            addr = self.membership.get(target, {}).get("address")
+            hints_list = list(self.hints.get(target, []))
 
-        if not addr:
-            print(f"[{self.node_id}] No address for {target}, cannot deliver hints")
+        if not hints_list:
+            # nothing to do
             return
 
-        try:
-            ch = grpc.insecure_channel(addr)
-            stub = dynamo_pb2_grpc.DynamoServiceStub(ch)
-            req = dynamo_pb2.DeliverHintsRequest(
-                target_node_id=target,
-                hints=hints
-            )
-            rep = stub.DeliverHints(req, timeout=5)
-            if rep.success:
-                with self.lock:
-                    self.hints[target] = []
-                print(f"[{self.node_id}] Delivered {len(hints)} hints → {target}")
-        except Exception as e:
-            print(f"[{self.node_id}] Failed delivering hints → {target}: {e}")
+        # Resolve address (membership -> ring)
+        addr = None
+        with self.lock:
+            addr = self.membership.get(target, {}).get("address")
+        if not addr:
+            addr = self.ring.nodes.get(target)
+
+        if not addr:
+            print(f"[{self.node_id}] deliver_hints_to: no address for {target}, skipping")
+            return
+
+        # Attempt a few tries (to tolerate transient RPC failure)
+        max_attempts = 3
+        last_exc = None
+        for attempt in range(1, max_attempts + 1):
+            try:
+                ch = grpc.insecure_channel(addr)
+                stub = dynamo_pb2_grpc.DynamoServiceStub(ch)
+                req = dynamo_pb2.DeliverHintsRequest(target_node_id=target, hints=hints_list)
+                rep = stub.DeliverHints(req, timeout=4.0)
+                if rep and getattr(rep, "success", False):
+                    # remote accepted; remove delivered hints safely
+                    with self.lock:
+                        existing = self.hints.get(target, [])
+                        # remove delivered items by matching (key,timestamp_ms)
+                        delivered_set = set((h.key, getattr(h, "timestamp_ms", None)) for h in hints_list)
+                        remaining = [h for h in existing if (h.key, getattr(h, "timestamp_ms", None)) not in delivered_set]
+                        self.hints[target] = remaining
+                    print(f"[{self.node_id}] Delivered {len(hints_list)} hints → {target} (addr={addr})")
+                    return
+                else:
+                    # remote reply but failed
+                    print(f"[{self.node_id}] Remote did not accept hints → {target} (addr={addr}) reply={rep}")
+                    last_exc = RuntimeError("remote rejected hints")
+            except Exception as e:
+                last_exc = e
+                print(f"[{self.node_id}] Attempt {attempt} failed delivering hints → {target} (addr={addr}): {e}")
+
+            # small backoff before next try
+            time.sleep(0.7)
+
+        # If we reach here, all attempts failed
+        print(f"[{self.node_id}] Failed to deliver hints → {target} after {max_attempts} attempts. Last error: {last_exc}")
 
     # ====================================================
     # GOSSIP RPC
@@ -546,6 +592,14 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
                         if nid in self.hints and self.hints[nid]:
                             to_deliver.append(nid)
 
+                    # EVEN IF prev_up==cur_up, if there are pending hints for this node,
+                    # schedule delivery (handles missed transitions / races).
+                    elif cur["up"]:
+                        # if hints exist, attempt delivery (will be deduped in deliver_hints_to)
+                        if nid in self.hints and self.hints[nid]:
+                            # append only if not already scheduled
+                            to_deliver.append(nid)
+
                     # if not prev_up and cur["up"]:
                     #     if nid in self.hints and self.hints[nid]:
                     #         to_deliver.append(nid)
@@ -567,12 +621,13 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
             for nid, info in list(self.membership.items()):
 
                 # ---- ADD NODES THAT ARE UP AND MISSING ----
-                if info["up"] and nid != self.node_id and info["address"] \
-                and nid not in self.ring.nodes:
-                    try:
+                # FIX: prevent duplicate ring additions
+                if info["up"] and nid != self.node_id and info["address"]:
+                    if nid not in self.ring.nodes:
                         self.ring.add_node(nid, info["address"])
                         print(f"[{self.node_id}] Ring add (UP): {nid}")
-                    except:
+                    else:
+                        # prevent infinite spam
                         pass
 
                 # ---- REMOVE NODES DOWN FOR LONG ----
@@ -607,6 +662,7 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
                     )
                 )
         return resp
+
     # ====================================================
     # GOSSIP LOOP
     # ====================================================
@@ -670,6 +726,37 @@ class DynamoNode(dynamo_pb2_grpc.DynamoServiceServicer):
 
             time.sleep(GOSSIP_INTERVAL)
 
+    # ---------------------------
+    # Periodic Hints Delivery Loop (robust)
+    # ---------------------------
+    def _hints_delivery_loop(self):
+        """
+        Periodically attempt to deliver hints for all targets that have pending hints.
+        This will try delivery regardless of membership 'up' status (use ring/address),
+        retry on transient failures and print diagnostics.
+        """
+        while True:
+            try:
+                with self.lock:
+                    # targets that actually have pending hints (copy to avoid mutation under lock)
+                    pending_targets = [nid for nid, lst in self.hints.items() if lst]
+
+                if pending_targets:
+                    print(f"[{self.node_id}] HINTS pending for: " + ", ".join(f"{t}:{len(self.hints.get(t,[]))}" for t in pending_targets))
+
+                for target in pending_targets:
+                    # call deliver even if membership says down -- node might be reachable
+                    try:
+                        self.deliver_hints_to(target)
+                    except Exception as e:
+                        print(f"[{self.node_id}] deliver_hints_to({target}) threw: {e}")
+
+            except Exception as e:
+                print(f"[{self.node_id}] Hints delivery loop error: {e}")
+
+            # short sleep for frequent retries
+            time.sleep(2.0)
+
 # ====================================================
 #   SERVER STARTUP
 # ====================================================
@@ -682,7 +769,6 @@ def serve(node_id, port, ring):
     server.start()
     print(f"[{node_id}] Server started on port {port}")
     server.wait_for_termination()
-
 
 # ====================================================
 #   MAIN

@@ -22,6 +22,12 @@ class DHTRing:
     # -------------------------------
     def add_node(self, node_id: str, address: str):
         if node_id in self.nodes:
+            # optionally update the address if it changed:
+            if self.nodes.get(node_id) != address:
+                self.nodes[node_id] = address
+                # update vnode mappings if you store addresses per vnode
+            return
+        if node_id in self.nodes:
             print(f"[Ring] Node {node_id} already exists.")
             return
         

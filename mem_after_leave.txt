@@ -3,5 +3,5 @@
 
 --- Cluster Membership ---
 node-1      localhost:50051       gen=1      UP
-node-2                            gen=1764529244  DOWN
+node-2                            gen=1764545225  DOWN
 node-3      localhost:50053       gen=1      UP

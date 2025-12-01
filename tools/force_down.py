@@ -11,9 +11,9 @@ import dynamo_pb2_grpc
 def force_down(target):
     print(f"[FORCE] Marking {target} DOWN and forcing ring removal...")
 
-    # Trick: set last_ts far in the past so every node thinks target timed out
-    old_ts = int(time.time()*1000) - 60000   # 60 seconds ago
-    generation = int(time.time())           # bump generation
+    # Make last_ts FAR enough in the past so removal condition triggers ( > REMOVE_TIMEOUT_MS)
+    old_ts = int(time.time()*1000) - (5 * 60 * 1000)   # 5 minutes ago
+    generation = int(time.time())
 
     ml = dynamo_pb2.MembershipList()
     ns = dynamo_pb2.NodeState(
@@ -25,14 +25,15 @@ def force_down(target):
     )
     ml.members.append(ns)
 
+    # send gossip to live nodes so they update membership + ring
     for port in [50051, 50052]:
         try:
             ch = grpc.insecure_channel(f"localhost:{port}")
             stub = dynamo_pb2_grpc.DynamoServiceStub(ch)
             stub.Gossip(ml, timeout=1)
             print(f"[OK] Forced DOWN injected via node on port {port}")
-        except:
-            print(f"[WARN] Node on port {port} unreachable")
+        except Exception as e:
+            print(f"[WARN] Node on port {port} unreachable: {e}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
