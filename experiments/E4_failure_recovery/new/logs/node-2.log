@@ -1,0 +1,11 @@
+18:45:55.901 INFO  dynamo.node [node-2] initialised at localhost:26052 (N=3 R=2 W=2, 0 keys, 0 hinted keys on disk)
+18:45:55.919 INFO  dynamo.server [node-2] serving on localhost:26052
+18:45:55.924 INFO  dynamo.node [node-2] membership: node-1 JOINED
+18:45:57.043 INFO  dynamo.node [node-2] membership: node-3 JOINED
+18:46:12.880 INFO  dynamo.node [node-2] membership: node-3 marked DEAD (unreachable)
+18:46:12.881 INFO  dynamo.node [node-2] holding hinted writes for unreachable replica node-3
+18:46:12.890 INFO  dynamo.node [node-2] holding hinted writes for unreachable replica node-3
+18:46:28.910 INFO  dynamo.node [node-2] membership: node-3 RECOVERED
+18:46:30.396 INFO  dynamo.node [node-2] hinted handoff: delivered 737 key(s) to node-3
+18:46:48.229 INFO  dynamo.server [node-2] received SIGTERM, shutting down
+18:46:48.235 INFO  dynamo.server [node-2] stopped

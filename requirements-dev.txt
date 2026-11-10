@@ -1,0 +1,7 @@
+-r requirements.txt
+grpcio-tools>=1.85.1
+pytest>=8
+pytest-timeout>=2.3
+ruff>=0.6
+matplotlib>=3.8
+numpy>=1.26

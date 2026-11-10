@@ -1,0 +1,7 @@
+{
+  "nodes": 8,
+  "keys": 50000,
+  "trials_per_setting": 20,
+  "ideal_moved_on_join_pct": 11.11,
+  "modulo_hashing_moved_on_join_pct": 88.95
+}

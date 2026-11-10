@@ -1,0 +1,13 @@
+{
+  "date_utc": "2026-11-06 13:05",
+  "git_commit": "d7f3c00",
+  "cpu": "12th Gen Intel(R) Core(TM) i5-1235U",
+  "logical_cpus": 4,
+  "memory_gb": 8.1,
+  "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+  "python": "3.12.15",
+  "grpcio": "1.85.1",
+  "note": "client and all server processes share this one machine",
+  "duration_s": 87,
+  "commit_note": "run started before d7f3c00 was committed; the code that ran is exactly d7f3c00 (the commit only re-sorted an import)"
+}

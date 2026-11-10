@@ -1,0 +1,6 @@
+# Generated protobuf/gRPC bindings: collapsed in diffs, excluded from language stats.
+dynamo/proto/dynamo_pb2.py      linguist-generated=true
+dynamo/proto/dynamo_pb2.pyi     linguist-generated=true
+dynamo/proto/dynamo_pb2_grpc.py linguist-generated=true
+# Raw experiment data
+experiments/**/*.csv.gz         binary

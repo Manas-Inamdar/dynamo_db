@@ -1,0 +1,3 @@
+fsync,throughput_ops_s,requests,failed,error_rate,p50_ms,p90_ms,p99_ms,max_ms,put_p50_ms,get_p50_ms
+False,311.2,4668,0,0.0,25.369,38.488,52.522,63.956,25.369,
+True,231.0,3465,0,0.0,33.651,49.999,79.955,129.225,33.651,

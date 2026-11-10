@@ -1,0 +1,229 @@
+[Ring] Added node node-2 with 10 vnodes.
+[node-2] Added self to ring at localhost:26052
+[node-2] Node initialized at localhost:26052
+[node-2] Loaded 0 versions from disk
+[node-2] Server started on port 26052
+[node-2] Contacting seed localhost:26051 ...
+[node-2] Successfully joined cluster via seed localhost:26051
+[node-2] Gossip: NEW node node-1 @ localhost:26051
+[Ring] Added node node-1 with 10 vnodes.
+[node-2] Ring add (new): node-1
+[node-2] Gossip: NEW node node-3 @ localhost:26053
+[Ring] Added node node-3 with 10 vnodes.
+[node-2] Ring add (new): node-3
+[node-2] CLIENT PUT key-250
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT PUT key-625
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] GET reply from node-1
+[node-2] GET reply from node-1
+[node-2] GET reply from node-3
+[node-2] GET reply from node-3
+[node-2] Persisted version of key=key-250
+[node-2] Persisted version of key=key-625
+[node-2] Replica stored key-375
+[node-2] Replica node-1 ACK
+[node-2] Replica stored key-125
+[node-2] Replica stored key-0
+[node-2] Replica node-3 ACK
+[node-2] CLIENT PUT key-376
+[node-2] Preference list: ['node-3', 'node-1', 'node-2']
+[node-2] Replica stored key-750
+[node-2] Replica node-1 ACK
+[node-2] Replica stored key-875
+[node-2] Replica node-3 ACK
+[node-2] GET reply from node-1
+[node-2] GET reply from node-3
+[node-2] Replica stored key-500
+[node-2] CLIENT PUT key-751
+[node-2] Preference list: ['node-1', 'node-2', 'node-3']
+[node-2] CLIENT PUT key-1
+[node-2] Preference list: ['node-1', 'node-2', 'node-3']
+[node-2] GET reply from node-1
+[node-2] GET reply from node-3
+[node-2] GET reply from node-3
+[node-2] GET reply from node-1
+[node-2] Persisted version of key=key-376
+[node-2] Replica node-1 ACK
+[node-2] Replica node-3 ACK
+[node-2] Replica stored key-251
+[node-2] Replica stored key-126
+[node-2] Persisted version of key=key-751
+[node-2] Persisted version of key=key-1
+[node-2] CLIENT PUT key-127
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] Replica stored key-626
+[node-2] Replica node-3 ACK
+[node-2] Replica node-3 ACK
+[node-2] Replica node-1 ACK
+[node-2] GET reply from node-3
+[node-2] Replica stored key-501
+[node-2] Replica stored key-876
+[node-2] GET reply from node-1
+[node-2] Replica node-1 ACK
+[node-2] CLIENT PUT key-877
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] GET reply from node-1
+[node-2] GET reply from node-3
+[node-2] CLIENT PUT key-502
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] GET reply from node-1
+[node-2] GET reply from node-3
+[node-2] Replica stored key-377
+[node-2] Replica stored key-252
+[node-2] Persisted version of key=key-127
+[node-2] Persisted version of key=key-877
+[node-2] CLIENT PUT key-253
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] Replica node-1 ACK
+[node-2] Replica node-3 ACK
+[node-2] Persisted version of key=key-502
+[node-2] Replica stored key-752[node-2] GET reply from node-1
+[node-2] Replica stored key-2
+[node-2] Replica node-1 ACK[node-2] GET reply from node-3
+[node-2] Replica node-3 ACK
+
+[node-2] Replica node-3 ACK
+
+[node-2] Replica node-1 ACK
+[node-2] Replica stored key-627
+[node-2] CLIENT PUT key-628
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] GET reply from node-3
+[node-2] GET reply from node-1
+[node-2] Replica stored key-378
+[node-2] CLIENT PUT key-379
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] Persisted version of key=key-253
+[node-2] GET reply from node-1
+[node-2] GET reply from node-3
+[node-2] Replica node-1 ACK
+... 7920 lines omitted except key events ...
+[node-2] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-919 for target=node-3
+[node-2] Delivered 1 hints → node-3 (addr=localhost:26053)
+[node-2] Delivered 1 hints
+[node-2] ERROR PUT→node-1: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-445 for target=node-1
+[node-2] Delivered 1 hints
+[node-2] Delivered 1 hints → node-1 (addr=localhost:26051)
+[node-2] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-469 for target=node-3
+[node-2] Delivered 1 hints → node-3 (addr=localhost:26053)
+[node-2] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-361 for target=node-3
+[node-2] Delivered 1 hints → node-3 (addr=localhost:26053)
+[node-2] ERROR PUT→node-1: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-238 for target=node-1
+[node-2] Delivered 1 hints
+[node-2] Delivered 1 hints → node-1 (addr=localhost:26051)
+[node-2] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+>[node-2] Persisted version of key=key-498[node-2] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-498 for target=node-3[node-2] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-751 for target=node-3
+[node-2] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-2] HINT STORED for key=key-976 for target=node-3
+[node-2] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+... end of key events ...
+	debug_error_string = "UNAVAILABLE:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:26053: Failed to connect to remote host: Connection refused"
+>
+[node-2] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = "failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:26053: Failed to connect to remote host: Connection refused"
+	debug_error_string = "UNAVAILABLE:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:26053: Failed to connect to remote host: Connection refused"
+>
+[node-2] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = "failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:26053: Failed to connect to remote host: Connection refused"
+	debug_error_string = "UNAVAILABLE:failed to connect to all addresses; last error: UNKNOWN: ipv6:%5B::1%5D:26053: Failed to connect to remote host: Connection refused"
+>
+[node-2] GET reply from node-1
+[node-2] CLIENT GET key-45[node-2] Replica node-1 ACK
+
+[node-2] Preference list: ['node-3', 'node-2', 'node-1'][node-2] GET reply from node-1
+[node-2] Marked node-3 DOWN (RPC failure).
+[node-2] GET reply from node-2
+
+[node-2] SKIP GET → node-3 (DOWN)
+[node-2] GET reply from node-1
+[node-2] GET reply from node-2
+[node-2] CLIENT PUT key-659
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] SKIP GET → node-3 (DOWN)
+[node-2] CLIENT GET key-576
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] Replica stored key-89[node-2] SKIP GET → node-3 (DOWN)
+
+[node-2] GET reply from node-2
+[node-2] GET reply from node-1[node-2] GET reply from node-1
+[node-2] GET reply from node-1
+
+[node-2] Replica stored key-964
+[node-2] GET reply from node-2
+[node-2] CLIENT PUT key-671
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT PUT key-394
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] SKIP GET → node-3 (DOWN)
+[node-2] SKIP GET → node-3 (DOWN)[node-2] CLIENT PUT key-581
+
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] CLIENT GET key-8
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] SKIP GET → node-3 (DOWN)
+[node-2] CLIENT GET key-775
+[node-2] GET reply from node-1
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] SKIP GET → node-3 (DOWN)
+[node-2] GET reply from node-1
+[node-2] GET reply from node-1
+[node-2] SKIP GET → node-3 (DOWN)
+[node-2] GET reply from node-1
+[node-2] GET reply from node-2
+[node-2] GET reply from node-1
+[node-2] GET reply from node-2
+[node-2] Persisted version of key=key-961
+[node-2] SKIP PUT → node-3 (DOWN)
+[node-2] CLIENT GET key-298
+[node-2] Preference list: ['node-1', 'node-2', 'node-3']
+[node-2] Replica node-1 ACK
+[node-2] CLIENT PUT key-704
+[node-2] Preference list: ['node-1', 'node-2', 'node-3']
+[node-2] CLIENT PUT key-772
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] CLIENT GET key-336
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT GET key-392
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] CLIENT PUT key-799
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT PUT key-531
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT GET key-826
+[node-2] Preference list: ['node-1', 'node-2', 'node-3']
+[node-2] CLIENT PUT key-153
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] CLIENT PUT key-296
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT PUT key-376
+[node-2] Preference list: ['node-3', 'node-1', 'node-2']
+[node-2] CLIENT PUT key-807
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT PUT key-407
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] CLIENT PUT key-615
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']
+[node-2] CLIENT PUT key-802
+[node-2] Preference list: ['node-1', 'node-2', 'node-3']
+[node-2] CLIENT PUT key-134
+[node-2] Preference list: ['node-3', 'node-1', 'node-2']
+[node-2] CLIENT PUT key-963
+[node-2] Preference list: ['node-1', 'node-2', 'node-3']
+[node-2] CLIENT PUT key-877
+[node-2] Preference list: ['node-2', 'node-1', 'node-3']
+[node-2] CLIENT GET key-463
+[node-2] Preference list: ['node-3', 'node-2', 'node-1']
+[node-2] CLIENT PUT key-60
+[node-2] Preference list: ['node-2', 'node-3', 'node-1']

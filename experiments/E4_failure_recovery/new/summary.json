@@ -1,0 +1,55 @@
+{
+  "spec": {
+    "nodes": [
+      "localhost:26051",
+      "localhost:26052",
+      "localhost:26053"
+    ],
+    "clients": 16,
+    "duration": 45.0,
+    "put_ratio": 0.5,
+    "keyspace": 1000,
+    "value_size": 100,
+    "timeout": 2.0,
+    "processes": 0,
+    "seed": 42
+  },
+  "total_requests": 14418,
+  "successful": 14418,
+  "throughput_ops_s": 320.4,
+  "error_rate": 0.0,
+  "statuses": {
+    "ok": 14418
+  },
+  "retried": 41,
+  "latency_all": {
+    "count": 14418,
+    "mean_ms": 49.949,
+    "p50_ms": 43.427,
+    "p90_ms": 86.487,
+    "p99_ms": 154.954,
+    "p999_ms": 212.329,
+    "max_ms": 261.739
+  },
+  "latency_put": {
+    "count": 7200,
+    "mean_ms": 66.011,
+    "p50_ms": 59.867,
+    "p90_ms": 105.634,
+    "p99_ms": 174.741,
+    "p999_ms": 220.596,
+    "max_ms": 261.739
+  },
+  "latency_get": {
+    "count": 7218,
+    "mean_ms": 33.928,
+    "p50_ms": 32.277,
+    "p90_ms": 52.662,
+    "p99_ms": 84.788,
+    "p999_ms": 116.365,
+    "max_ms": 158.375
+  },
+  "impl": "new",
+  "kill_at_s": 10.0,
+  "restart_at_s": 25.0
+}

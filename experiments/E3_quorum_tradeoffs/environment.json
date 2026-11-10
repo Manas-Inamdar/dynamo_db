@@ -1,0 +1,12 @@
+{
+  "date_utc": "2026-11-06 13:19",
+  "git_commit": "9e96cce",
+  "cpu": "12th Gen Intel(R) Core(TM) i5-1235U",
+  "logical_cpus": 4,
+  "memory_gb": 8.1,
+  "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+  "python": "3.12.15",
+  "grpcio": "1.85.1",
+  "note": "client and all server processes share this one machine",
+  "duration_s": 222
+}

@@ -1,0 +1,214 @@
+[Ring] Added node node-3 with 10 vnodes.
+[node-3] Added self to ring at localhost:26053
+[node-3] Node initialized at localhost:26053
+[node-3] Loaded 0 versions from disk
+[node-3] Server started on port 26053
+[node-3] Contacting seed localhost:26051 ...
+[node-3] Successfully joined cluster via seed localhost:26051
+[node-3] Gossip: NEW node node-2 @ localhost:26052
+[Ring] Added node node-2 with 10 vnodes.
+[node-3] Ring add (new): node-2
+[node-3] Gossip: NEW node node-1 @ localhost:26051
+[Ring] Added node node-1 with 10 vnodes.
+[node-3] Ring add (new): node-1
+[node-3] CLIENT PUT key-125
+[node-3] Preference list: ['node-2', 'node-3', 'node-1']
+[node-3] CLIENT PUT key-500
+[node-3] Preference list: ['node-3', 'node-2', 'node-1']
+[node-3] CLIENT PUT key-875
+[node-3] Preference list: ['node-1', 'node-2', 'node-3']
+[node-3] GET reply from node-1
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] GET reply from node-2
+[node-3] Persisted version of key=key-125
+[node-3] Replica stored key-750
+[node-3] Persisted version of key=key-500
+[node-3] Replica stored key-375
+[node-3] Replica node-2 ACK[node-3] Persisted version of key=key-875[node-3] Replica node-1 ACK
+
+
+[node-3] Replica stored key-625
+[node-3] Replica stored key-0
+[node-3] Replica node-1 ACK
+[node-3] Replica node-1 ACK
+[node-3] Replica stored key-250
+[node-3] Replica node-2 ACK
+[node-3] CLIENT PUT key-626
+[node-3] Preference list: ['node-2', 'node-3', 'node-1']
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] Replica node-2 ACK
+[node-3] CLIENT PUT key-251
+[node-3] Preference list: ['node-3', 'node-2', 'node-1']
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] Replica stored key-126
+[node-3] Replica stored key-751
+[node-3] CLIENT PUT key-752
+[node-3] Preference list: ['node-2', 'node-3', 'node-1']
+[node-3] Replica stored key-376
+[node-3] GET reply from node-1
+[node-3] Persisted version of key=key-626
+[node-3] GET reply from node-2
+[node-3] Replica node-1 ACK
+[node-3] Replica node-2 ACK
+[node-3] CLIENT PUT key-377
+[node-3] Preference list: ['node-2', 'node-1', 'node-3']
+[node-3] Replica stored key-501
+[node-3] Persisted version of key=key-251
+[node-3] Replica stored key-876
+[node-3] Replica stored key-1
+[node-3] GET reply from node-2[node-3] GET reply from node-1
+
+[node-3] Replica node-2 ACK
+[node-3] CLIENT PUT key-2
+[node-3] Preference list: ['node-2', 'node-1', 'node-3']
+[node-3] Replica node-1 ACK
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] Replica stored key-127
+[node-3] Persisted version of key=key-752
+[node-3] CLIENT PUT key-128
+[node-3] Preference list: ['node-2', 'node-3', 'node-1']
+[node-3] Replica node-2 ACK
+[node-3] GET reply from node-2
+[node-3] Replica node-1 ACK
+[node-3] GET reply from node-1
+[node-3] Persisted version of key=key-377
+[node-3] Replica node-1 ACK
+[node-3] Replica node-2 ACK
+[node-3] Replica stored key-502
+[node-3] Replica stored key-627
+[node-3] Persisted version of key=key-2
+[node-3] CLIENT PUT key-503
+[node-3] Preference list: ['node-3', 'node-2', 'node-1']
+[node-3] Replica node-1 ACK
+[node-3] Replica node-2 ACK
+[node-3] Replica stored key-877[node-3] Replica stored key-252
+
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] CLIENT PUT key-878
+[node-3] Preference list: ['node-1', 'node-2', 'node-3']
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] Persisted version of key=key-128
+[node-3] Replica node-2 ACK
+[node-3] Replica node-1 ACK
+... 16748 lines omitted except key events ...
+[node-3] Delivered 2 hints
+[node-3] CLIENT PUT key-74[node-3] Delivered 1 hints
+[node-3] Delivered 1 hints
+[node-3] ERROR PUT→node-1: <_InactiveRpcError of RPC that terminated with:
+[node-3] HINT STORED for key=key-215 for target=node-1
+[node-3] Delivered 1 hints → node-1 (addr=localhost:26051)
+[node-3] ERROR PUT→node-1: <_InactiveRpcError of RPC that terminated with:
+[node-3] HINT STORED for key=key-101 for target=node-1
+[node-3] Delivered 2 hints
+[node-3] Delivered 1 hints → node-1 (addr=localhost:26051)
+[node-3] Delivered 1 hints
+[node-3] Delivered 1 hints
+... end of key events ...
+[node-3] CLIENT PUT key-257
+[node-3] Preference list: ['node-2', 'node-3', 'node-1']
+[node-3] GET reply from node-1
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] CLIENT PUT key-18
+[node-3] Preference list: ['node-1', 'node-3', 'node-2']
+[node-3] GET reply from node-2
+[node-3] GET reply from node-1
+[node-3] GET reply from node-1
+[node-3] Replica stored key-982
+[node-3] Replica stored key-372
+[node-3] Persisted version of key=key-979
+[node-3] Replica stored key-758
+[node-3] CLIENT GET key-396
+[node-3] Preference list: ['node-2', 'node-3', 'node-1']
+[node-3] Persisted version of key=key-591
+[node-3] GET reply from node-2
+[node-3] GET reply from node-1
+[node-3] Replica node-1 ACK
+[node-3] Persisted version of key=key-257
+[node-3] Replica node-2 ACK
+[node-3] Replica node-1 ACK[node-3] GET reply from node-3[node-3] Replica node-2 ACK
+
+[node-3] Replica stored key-123
+
+[node-3] Persisted version of key=key-18
+[node-3] Replica node-2 ACK
+[node-3] CLIENT GET key-568
+[node-3] Preference list: ['node-2', 'node-1', 'node-3']
+[node-3] Replica stored key-184
+[node-3] Replica node-1 ACK
+[node-3] Replica node-2 ACK
+[node-3] Replica node-1 ACK
+[node-3] GET reply from node-2
+[node-3] CLIENT PUT key-835
+[node-3] Preference list: ['node-2', 'node-1', 'node-3']
+[node-3] Replica stored key-656
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2[node-3] GET reply from node-3
+
+[node-3] CLIENT PUT key-183
+[node-3] Preference list: ['node-1', 'node-2', 'node-3']
+[node-3] Replica stored key-725
+[node-3] CLIENT PUT key-291
+[node-3] Preference list: ['node-3', 'node-2', 'node-1']
+[node-3] GET reply from node-1
+[node-3] GET reply from node-2
+[node-3] Replica stored key-86
+[node-3] GET reply from node-1
+[node-3] Replica stored key-165
+[node-3] GET reply from node-2
+[node-3] GET reply from node-1
+[node-3] CLIENT PUT key-826[node-3] CLIENT PUT key-590
+[node-3] Preference list: ['node-2', 'node-1', 'node-3']
+[node-3] Preference list: ['node-1', 'node-2', 'node-3']
+
+[node-3] Replica stored key-880
+[node-3] Replica stored key-187[node-3] CLIENT PUT key-847
+[node-3] Preference list: ['node-2', 'node-1', 'node-3']
+
+[node-3] GET reply from node-2
+[node-3] GET reply from node-2
+[node-3] GET reply from node-2
+[node-3] Replica stored key-335
+[node-3] GET reply from node-1
+[node-3] GET reply from node-1
+[node-3] Persisted version of key=key-835
+[node-3] GET reply from node-1
+[node-3] Persisted version of key=key-183
+[node-3] CLIENT PUT key-432
+[node-3] Preference list: ['node-3', 'node-2', 'node-1']
+[node-3] Replica node-1 ACK
+[node-3] Replica node-1 ACK
+[node-3] Replica node-2 ACK
+[node-3] Persisted version of key=key-291
+[node-3] GET reply from node-2
+[node-3] GET reply from node-1
+[node-3] Replica node-2 ACK
+[node-3] Replica node-2 ACK
+[node-3] Replica node-1 ACK
+[node-3] Persisted version of key=key-826
+[node-3] Persisted version of key=key-590
+[node-3] Replica node-1 ACK
+[node-3] Persisted version of key=key-847
+[node-3] Replica node-2 ACK
+[node-3] Replica node-2 ACK
+[node-3] Replica node-2 ACK
+[node-3] Replica stored key-820
+[node-3] Replica node-1 ACK
+[node-3] Replica node-1 ACK
+[node-3] Replica stored key-195
+[node-3] Replica stored key-486
+[node-3] Replica stored key-310
+[node-3] Replica stored key-69
+[node-3] Replica stored key-963
+[node-3] Persisted version of key=key-432
+[node-3] Replica node-1 ACK
+[node-3] Replica node-2 ACK
+[node-3] Replica stored key-995

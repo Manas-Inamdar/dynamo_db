@@ -1,0 +1,356 @@
+[Ring] Added node node-1 with 10 vnodes.
+[node-1] Added self to ring at localhost:26051
+[node-1] Node initialized at localhost:26051
+[node-1] Loaded 0 versions from disk
+[node-1] Server started on port 26051
+[node-1] Gossip: NEW node node-2 @ localhost:26052
+[Ring] Added node node-2 with 10 vnodes.
+[node-1] Ring add (new): node-2
+[node-1] Gossip: NEW node node-3 @ localhost:26053
+[Ring] Added node node-3 with 10 vnodes.
+[node-1] Ring add (new): node-3
+[node-1] CLIENT PUT key-375
+[node-1] Preference list: ['node-3', 'node-1', 'node-2']
+[node-1] CLIENT PUT key-750
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-0
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] GET reply from node-2
+[node-1] GET reply from node-3
+[node-1] GET reply from node-3
+[node-1] GET reply from node-3
+[node-1] GET reply from node-2
+[node-1] GET reply from node-2
+[node-1] Persisted version of key=key-375
+[node-1] Replica stored key-250
+[node-1] Persisted version of key=key-750
+[node-1] Replica node-2 ACK
+[node-1] Replica node-3 ACK
+[node-1] Persisted version of key=key-0
+[node-1] Replica stored key-125
+[node-1] Replica node-2 ACK
+[node-1] Replica node-3 ACK
+[node-1] Replica stored key-625
+[node-1] Replica node-2 ACK
+[node-1] Replica stored key-875
+[node-1] Replica stored key-500
+[node-1] CLIENT PUT key-126
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] Replica node-3 ACK
+[node-1] GET reply from node-2
+[node-1] CLIENT PUT key-876
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-501
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] GET reply from node-3
+[node-1] GET reply from node-2
+[node-1] GET reply from node-2
+[node-1] GET reply from node-3
+[node-1] GET reply from node-3
+[node-1] Replica stored key-376
+[node-1] Persisted version of key=key-126
+[node-1] Replica stored key-251
+[node-1] Replica node-2 ACK
+[node-1] CLIENT PUT key-252
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] Replica node-3 ACK
+[node-1] Persisted version of key=key-501
+[node-1] Persisted version of key=key-876
+[node-1] GET reply from node-3
+[node-1] Replica stored key-751
+[node-1] Replica node-3 ACK
+[node-1] Replica stored key-626
+[node-1] GET reply from node-2
+[node-1] Replica stored key-1
+[node-1] Replica node-2 ACK[node-1] Replica node-2 ACK
+
+[node-1] CLIENT PUT key-627
+[node-1] Preference list: ['node-1', 'node-3', 'node-2']
+[node-1] Replica node-3 ACK
+[node-1] GET reply from node-2
+[node-1] GET reply from node-3
+[node-1] Replica stored key-377
+[node-1] Persisted version of key=key-252
+[node-1] CLIENT PUT key-378
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] GET reply from node-2
+[node-1] GET reply from node-3
+[node-1] Replica node-3 ACK
+[node-1] Replica node-2 ACK
+[node-1] Replica stored key-127
+[node-1] Persisted version of key=key-627
+[node-1] Replica node-3 ACK
+[node-1] Replica stored key-752
+[node-1] Replica stored key-877
+[node-1] Replica stored key-2
+[node-1] Replica stored key-502
+[node-1] CLIENT PUT key-753
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT PUT key-3
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] Replica node-2 ACK
+[node-1] GET reply from node-2
+[node-1] GET reply from node-2
+[node-1] GET reply from node-3
+[node-1] GET reply from node-3
+[node-1] Persisted version of key=key-378
+[node-1] Replica node-2 ACK
+[node-1] Replica node-3 ACK
+[node-1] Replica stored key-253
+[node-1] Replica stored key-128
+... 8341 lines omitted except key events ...
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] HINT STORED for key=key-420 for target=node-3
+[node-1] Delivered 1 hints → node-3 (addr=localhost:26053)
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] HINT STORED for key=key-438 for target=node-3
+[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+[node-1] HINT STORED for key=key-72 for target=node-2
+[node-1] Delivered 1 hints → node-3 (addr=localhost:26053)
+[node-1] Delivered 1 hints → node-2 (addr=localhost:26052)
+[node-1] Delivered 1 hints
+[node-1] Delivered 2 hints
+[node-1] Delivered 2 hints
+[node-1] Delivered 2 hints
+[node-1] Delivered 1 hints
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] Preference list: ['node-2', 'node-3', 'node-1'][node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] HINT STORED for key=key-89 for target=node-3
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] HINT STORED for key=key-964 for target=node-3
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] HINT STORED for key=key-166 for target=node-3
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] HINT STORED for key=key-865 for target=node-3
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-166 for target=node-2
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-865 for target=node-2
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+>[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-188 for target=node-2[node-1] HINT STORED for key=key-188 for target=node-3
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-896 for target=node-3
+[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-896 for target=node-2
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-609 for target=node-3
+[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-695 for target=node-2
+[node-1] ERROR PUT→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-695 for target=node-3
+[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] HINT STORED for key=key-609 for target=node-2
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+>[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] SKIP PUT → node-3 (DOWN)
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+>[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR GET→node-3: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+[node-1] ERROR PUT→node-2: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+	status = StatusCode.DEADLINE_EXCEEDED
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+... end of key events ...
+[node-1] CLIENT GET key-601
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT PUT key-318
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET key-968
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET key-396
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET key-286
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET key-727
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET key-445
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET key-371
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET key-63
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT PUT key-367
+[node-1] CLIENT GET key-198
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET key-504
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] Attempt 3 failed delivering hints → node-3 (addr=localhost:26053): <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	details = "Deadline Exceeded"
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+>
+[node-1] Failed to deliver hints → node-3 after 3 attempts. Last error: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	details = "Deadline Exceeded"
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+>
+[node-1] CLIENT GET key-91
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET key-468
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT PUT key-18
+[node-1] Preference list: ['node-1', 'node-3', 'node-2']
+[node-1] CLIENT GET key-727
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET key-960
+[node-1] Preference list: ['node-3', 'node-1', 'node-2']
+[node-1] CLIENT GET key-93
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-900
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT PUT key-389
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET key-637
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET key-408
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT PUT key-888
+[node-1] Preference list: ['node-3', 'node-1', 'node-2']
+[node-1] CLIENT GET key-90
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-893
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT PUT key-194
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET key-681
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET key-602
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET key-198
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET key-509
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET key-653
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET key-522
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET key-984
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-671
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT GET key-236
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-296
+[node-1] Preference list: ['node-2', 'node-1', 'node-3']
+[node-1] CLIENT PUT key-495
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT GET key-551
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-134
+[node-1] Preference list: ['node-3', 'node-1', 'node-2']
+[node-1] CLIENT GET key-73
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT PUT key-983
+[node-1] Preference list: ['node-2', 'node-3', 'node-1']
+[node-1] CLIENT GET key-394
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT GET key-832
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']
+[node-1] CLIENT PUT key-436
+[node-1] Preference list: ['node-3', 'node-2', 'node-1']
+[node-1] CLIENT PUT key-513
+[node-1] Preference list: ['node-1', 'node-2', 'node-3']

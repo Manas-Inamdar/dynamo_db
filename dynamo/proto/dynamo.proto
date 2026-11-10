@@ -1,0 +1,139 @@
+// Wire protocol for the Dynamo-style key-value store.
+//
+// Regenerate the Python bindings with `make proto` after editing this file.
+// The service and message definitions are kept wire-compatible with the
+// original implementation so benchmarks can be run against both versions.
+syntax = "proto3";
+
+package dynamo;
+
+// ---------------------------------------------------------------------------
+// Versioning
+// ---------------------------------------------------------------------------
+
+// One entry of a vector clock: how many writes `node_id` has coordinated
+// in the causal history of a version.
+message VectorClockItem {
+  string node_id = 1;
+  uint64 counter = 2;
+}
+
+// Opaque-to-the-client version context (a vector clock). Clients pass back
+// the context they read so the coordinator can order the new write after it.
+message Context {
+  repeated VectorClockItem clock = 1;
+}
+
+// A single version of a value.
+//
+// Versions are dotted version vectors: `dot` uniquely identifies the write
+// event (coordinator node id + that node's write counter) and `context` is
+// the causal history the writer had seen. Version A supersedes version B iff
+// A's context contains B's dot. Keeping the dot separate from the context is
+// what lets a single coordinator accept concurrent writes without silently
+// discarding one of them (see docs/DESIGN.md, "Versioning").
+message ValueWithContext {
+  bytes value = 1;
+  Context context = 2;
+  VectorClockItem dot = 3;   // unset only for versions written by old nodes
+}
+
+// ---------------------------------------------------------------------------
+// Membership (gossip)
+// ---------------------------------------------------------------------------
+
+message NodeState {
+  string node_id = 1;
+  string address = 2;            // host:port the node can be reached at
+  uint32 generation = 3;         // process incarnation; bumped on restart
+  uint64 last_updated_time = 4;  // heartbeat version within a generation
+  bool up = 5;                   // false => node has administratively left
+}
+
+message MembershipList {
+  repeated NodeState members = 1;
+}
+
+// ---------------------------------------------------------------------------
+// Hinted handoff
+// ---------------------------------------------------------------------------
+
+// A write held by a stand-in node on behalf of an unreachable replica.
+message Hint {
+  string key = 1;
+  ValueWithContext data = 2;
+  string target_node_id = 3;     // replica the write was intended for
+  uint64 timestamp_ms = 4;
+}
+
+message DeliverHintsRequest {
+  string target_node_id = 1;
+  repeated Hint hints = 2;
+}
+
+message DeliverHintsReply {
+  bool success = 1;
+  string message = 2;
+}
+
+// ---------------------------------------------------------------------------
+// Client / replica operations
+// ---------------------------------------------------------------------------
+
+message PutRequest {
+  string key = 1;
+  // `data.context` is the context returned by a previous Get. Leave it empty
+  // for a "blind" write that supersedes every version the coordinator reads.
+  ValueWithContext data = 2;
+  string client_id = 3;
+  uint64 timestamp_ms = 4;
+}
+
+message PutReply {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetRequest {
+  string key = 1;
+  string client_id = 2;
+}
+
+message GetReply {
+  repeated ValueWithContext data = 1;  // >1 entries => concurrent siblings
+  bool found = 2;
+  string message = 3;
+}
+
+// ---------------------------------------------------------------------------
+// On-disk record (not sent over the wire)
+// ---------------------------------------------------------------------------
+
+// All live (non-obsolete) versions of a key, persisted as one file per key.
+message StoredRecord {
+  string key = 1;
+  repeated ValueWithContext versions = 2;
+}
+
+// ---------------------------------------------------------------------------
+// Service
+// ---------------------------------------------------------------------------
+
+service DynamoService {
+  // Client -> any node. The receiving node acts as the coordinator. Quorum
+  // failures are reported with gRPC status UNAVAILABLE.
+  rpc Put (PutRequest) returns (PutReply);
+  rpc Get (GetRequest) returns (GetReply);
+
+  // Coordinator -> replica.
+  rpc ForwardPut (PutRequest) returns (PutReply);
+  rpc ForwardGet (GetRequest) returns (GetReply);
+
+  // Coordinator -> stand-in node (sloppy quorum), and stand-in -> recovered
+  // replica (hinted handoff).
+  rpc PutHint (Hint) returns (PutReply);
+  rpc DeliverHints (DeliverHintsRequest) returns (DeliverHintsReply);
+
+  // Push-pull membership exchange.
+  rpc Gossip (MembershipList) returns (MembershipList);
+}

@@ -1,1 +1,0 @@
-Gossip reply received from seed (merged snapshot).

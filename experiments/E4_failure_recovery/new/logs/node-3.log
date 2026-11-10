@@ -1,0 +1,11 @@
+18:45:56.007 INFO  dynamo.node [node-3] initialised at localhost:26053 (N=3 R=2 W=2, 0 keys, 0 hinted keys on disk)
+18:45:56.024 INFO  dynamo.server [node-3] serving on localhost:26053
+18:45:56.028 INFO  dynamo.node [node-3] membership: node-1 JOINED
+18:45:56.028 INFO  dynamo.node [node-3] membership: node-2 JOINED
+18:46:28.320 INFO  dynamo.storage storage: loaded 1000 keys from /home/user/Documents/Projects/dynamo_db/bench_out/e4_new/data/node-3/store
+18:46:28.334 INFO  dynamo.node [node-3] initialised at localhost:26053 (N=3 R=2 W=2, 1000 keys, 0 hinted keys on disk)
+18:46:28.367 INFO  dynamo.server [node-3] serving on localhost:26053
+18:46:28.394 INFO  dynamo.node [node-3] membership: node-1 JOINED
+18:46:28.395 INFO  dynamo.node [node-3] membership: node-2 JOINED
+18:46:48.293 INFO  dynamo.server [node-3] received SIGTERM, shutting down
+18:46:48.299 INFO  dynamo.server [node-3] stopped

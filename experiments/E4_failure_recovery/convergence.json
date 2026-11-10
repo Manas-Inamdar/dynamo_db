@@ -1,0 +1,28 @@
+{
+  "writes_while_down": 2665,
+  "write_error_rate_while_down": 0.0,
+  "hinted_keys_delivered": 1477,
+  "first_delivery_after_restart_s": 0.21,
+  "last_delivery_after_restart_s": 0.522,
+  "deliveries": [
+    {
+      "t_s": 0.21,
+      "keys": 734
+    },
+    {
+      "t_s": 0.522,
+      "keys": 743
+    }
+  ],
+  "verification_scans": [
+    {
+      "finished_at_s": 5.15,
+      "divergent_keys": 31
+    },
+    {
+      "finished_at_s": 9.81,
+      "divergent_keys": 0
+    }
+  ],
+  "converged": true
+}

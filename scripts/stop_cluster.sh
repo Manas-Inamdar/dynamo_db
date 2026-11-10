@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
+# Stop every node started by start_cluster.sh (graceful SIGTERM, then SIGKILL).
 set -euo pipefail
-
-echo "[CLUSTER] Stopping cluster processes (pids/*)"
-
-# Kill Python servers silently
-pkill -f "python3 server.py" >/dev/null 2>&1 || true
-pkill -f "server.py" >/dev/null 2>&1 || true
-pkill -f "python3 join_node.py" >/dev/null 2>&1 || true
-pkill -f "join_node.py" >/dev/null 2>&1 || true
-pkill -f "python3 leave_node.py" >/dev/null 2>&1 || true
-pkill -f "leave_node.py" >/dev/null 2>&1 || true
-
-sleep 1
+source "$(dirname "$0")/_common.sh"
+shopt -s nullglob
+for pidfile in "$PID_DIR"/node-*.pid; do
+  i=${pidfile##*/node-}; i=${i%.pid}
+  stop_node "$i" && echo "stopped node-$i"
+done

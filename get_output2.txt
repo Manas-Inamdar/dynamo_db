@@ -1,3 +1,0 @@
-[CLIENT] Added seed: localhost:50051
-[CLIENT] GET → localhost:50051 : xkey
-Key NOT FOUND: OK

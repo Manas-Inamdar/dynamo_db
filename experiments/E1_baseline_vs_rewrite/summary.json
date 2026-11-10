@@ -1,0 +1,26 @@
+{
+  "original": {
+    "throughput_ops_s": 198.6,
+    "requests": 5959,
+    "failed": 0,
+    "error_rate": 0.0,
+    "p50_ms": 77.723,
+    "p90_ms": 106.019,
+    "p99_ms": 143.918,
+    "max_ms": 196.436,
+    "put_p50_ms": 87.382,
+    "get_p50_ms": 67.794
+  },
+  "new": {
+    "throughput_ops_s": 327.6,
+    "requests": 9827,
+    "failed": 0,
+    "error_rate": 0.0,
+    "p50_ms": 41.79,
+    "p90_ms": 87.679,
+    "p99_ms": 139.831,
+    "max_ms": 198.925,
+    "put_p50_ms": 61.428,
+    "get_p50_ms": 29.849
+  }
+}

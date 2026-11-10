@@ -1,0 +1,6 @@
+18:36:04.144 INFO  dynamo.node [node-3] initialised at localhost:26053 (N=3 R=2 W=2, 0 keys, 0 hinted keys on disk)
+18:36:04.161 INFO  dynamo.server [node-3] serving on localhost:26053
+18:36:04.168 INFO  dynamo.node [node-3] membership: node-1 JOINED
+18:36:04.168 INFO  dynamo.node [node-3] membership: node-2 JOINED
+18:36:42.351 INFO  dynamo.server [node-3] received SIGTERM, shutting down
+18:36:42.359 INFO  dynamo.server [node-3] stopped
